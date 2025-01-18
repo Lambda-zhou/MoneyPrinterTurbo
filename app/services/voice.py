@@ -2,11 +2,13 @@ import asyncio
 import os
 import re
 from datetime import datetime
+from typing import Union
 from xml.sax.saxutils import unescape
+
+import edge_tts
+from edge_tts import SubMaker, submaker
 from edge_tts.submaker import mktimestamp
 from loguru import logger
-from edge_tts import submaker, SubMaker
-import edge_tts
 from moviepy.video.tools import subtitles
 
 from app.config import config
@@ -302,20 +304,32 @@ Gender: Female
 Name: en-US-AnaNeural
 Gender: Female
 
+Name: en-US-AndrewMultilingualNeural
+Gender: Male
+
 Name: en-US-AndrewNeural
 Gender: Male
 
 Name: en-US-AriaNeural
 Gender: Female
 
+Name: en-US-AvaMultilingualNeural
+Gender: Female
+
 Name: en-US-AvaNeural
 Gender: Female
+
+Name: en-US-BrianMultilingualNeural
+Gender: Male
 
 Name: en-US-BrianNeural
 Gender: Male
 
 Name: en-US-ChristopherNeural
 Gender: Male
+
+Name: en-US-EmmaMultilingualNeural
+Gender: Female
 
 Name: en-US-EmmaNeural
 Gender: Female
@@ -602,11 +616,23 @@ Gender: Male
 Name: it-IT-ElsaNeural
 Gender: Female
 
-Name: it-IT-GiuseppeNeural
+Name: it-IT-GiuseppeMultilingualNeural
 Gender: Male
 
 Name: it-IT-IsabellaNeural
 Gender: Female
+
+Name: iu-Cans-CA-SiqiniqNeural
+Gender: Female
+
+Name: iu-Cans-CA-TaqqiqNeural
+Gender: Male
+
+Name: iu-Latn-CA-SiqiniqNeural
+Gender: Female
+
+Name: iu-Latn-CA-TaqqiqNeural
+Gender: Male
 
 Name: ja-JP-KeitaNeural
 Gender: Male
@@ -644,7 +670,7 @@ Gender: Male
 Name: kn-IN-SapnaNeural
 Gender: Female
 
-Name: ko-KR-HyunsuNeural
+Name: ko-KR-HyunsuMultilingualNeural
 Gender: Male
 
 Name: ko-KR-InJoonNeural
@@ -758,7 +784,7 @@ Gender: Male
 Name: pt-BR-FranciscaNeural
 Gender: Female
 
-Name: pt-BR-ThalitaNeural
+Name: pt-BR-ThalitaMultilingualNeural
 Gender: Female
 
 Name: pt-PT-DuarteNeural
@@ -1030,7 +1056,7 @@ def is_azure_v2_voice(voice_name: str):
 
 def tts(
     text: str, voice_name: str, voice_rate: float, voice_file: str
-) -> [SubMaker, None]:
+) -> Union[SubMaker, None]:
     if is_azure_v2_voice(voice_name):
         return azure_tts_v2(text, voice_name, voice_file)
     return azure_tts_v1(text, voice_name, voice_rate, voice_file)
@@ -1048,7 +1074,7 @@ def convert_rate_to_percent(rate: float) -> str:
 
 def azure_tts_v1(
     text: str, voice_name: str, voice_rate: float, voice_file: str
-) -> [SubMaker, None]:
+) -> Union[SubMaker, None]:
     voice_name = parse_voice_name(voice_name)
     text = text.strip()
     rate_str = convert_rate_to_percent(voice_rate)
@@ -1071,7 +1097,7 @@ def azure_tts_v1(
 
             sub_maker = asyncio.run(_do())
             if not sub_maker or not sub_maker.subs:
-                logger.warning(f"failed, sub_maker is None or sub_maker.subs is None")
+                logger.warning("failed, sub_maker is None or sub_maker.subs is None")
                 continue
 
             logger.info(f"completed, output file: {voice_file}")
@@ -1081,7 +1107,7 @@ def azure_tts_v1(
     return None
 
 
-def azure_tts_v2(text: str, voice_name: str, voice_file: str) -> [SubMaker, None]:
+def azure_tts_v2(text: str, voice_name: str, voice_file: str) -> Union[SubMaker, None]:
     voice_name = is_azure_v2_voice(voice_name)
     if not voice_name:
         logger.error(f"invalid voice name: {voice_name}")

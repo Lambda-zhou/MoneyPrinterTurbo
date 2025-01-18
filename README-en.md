@@ -152,6 +152,8 @@ cd MoneyPrinterTurbo
 docker-compose up
 ```
 
+> Note：The latest version of docker will automatically install docker compose in the form of a plug-in, and the start command is adjusted to `docker compose up `
+
 #### ② Access the Web Interface
 
 Open your browser and visit http://0.0.0.0:8501
@@ -170,7 +172,7 @@ using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index
 ```shell
 git clone https://github.com/harry0703/MoneyPrinterTurbo.git
 cd MoneyPrinterTurbo
-conda create -n MoneyPrinterTurbo python=3.10
+conda create -n MoneyPrinterTurbo python=3.11
 conda activate MoneyPrinterTurbo
 pip install -r requirements.txt
 ```

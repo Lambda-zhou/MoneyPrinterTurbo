@@ -1,14 +1,14 @@
 import os
 import random
+from typing import List
 from urllib.parse import urlencode
 
 import requests
-from typing import List
 from loguru import logger
 from moviepy.video.io.VideoFileClip import VideoFileClip
 
 from app.config import config
-from app.models.schema import VideoAspect, VideoConcatMode, MaterialInfo
+from app.models.schema import MaterialInfo, VideoAspect, VideoConcatMode
 from app.utils import utils
 
 requested_count = 0
@@ -40,7 +40,10 @@ def search_videos_pexels(
     video_orientation = aspect.name
     video_width, video_height = aspect.to_resolution()
     api_key = get_api_key("pexels_api_keys")
-    headers = {"Authorization": api_key}
+    headers = {
+        "Authorization": api_key,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+    }
     # Build URL
     params = {"query": search_term, "per_page": 20, "orientation": video_orientation}
     query_url = f"https://api.pexels.com/videos/search?{urlencode(params)}"
@@ -126,7 +129,7 @@ def search_videos_pixabay(
             for video_type in video_files:
                 video = video_files[video_type]
                 w = int(video["width"])
-                h = int(video["height"])
+                # h = int(video["height"])
                 if w >= video_width:
                     item = MaterialInfo()
                     item.provider = "pixabay"
@@ -158,11 +161,19 @@ def save_video(video_url: str, save_dir: str = "") -> str:
         logger.info(f"video already exists: {video_path}")
         return video_path
 
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+    }
+
     # if video does not exist, download it
     with open(video_path, "wb") as f:
         f.write(
             requests.get(
-                video_url, proxies=config.proxy, verify=False, timeout=(60, 240)
+                video_url,
+                headers=headers,
+                proxies=config.proxy,
+                verify=False,
+                timeout=(60, 240),
             ).content
         )
 
@@ -177,7 +188,7 @@ def save_video(video_url: str, save_dir: str = "") -> str:
         except Exception as e:
             try:
                 os.remove(video_path)
-            except Exception as e:
+            except Exception:
                 pass
             logger.warning(f"invalid video file: {video_path} => {str(e)}")
     return ""
