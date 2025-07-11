@@ -1,3 +1,9 @@
+# 已实现项目复现
+## 具体内容如下
+环境：python 3.11, jupyter notebook，linux操作系统
+
+代码已经上传到MoneyPrinterTurbo.ipynb文件
+
 <div align="center">
 <h1 align="center">MoneyPrinterTurbo 💸</h1>
 
