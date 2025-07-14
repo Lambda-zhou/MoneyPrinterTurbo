@@ -5,7 +5,7 @@
 
 
 ## 注意事项
-请在代码运行之后打开的页面中输入自己的key
+请在代码运行之后打开的页面中输入自己的key，倘若只使用cpu则“较长的”时间等待。。。
 <img width="1908" height="903" alt="image" src="https://github.com/user-attachments/assets/d68bd998-9b34-47e9-8435-2d1abef4b8dd" />
 ps：右上角可以修改语言
 
